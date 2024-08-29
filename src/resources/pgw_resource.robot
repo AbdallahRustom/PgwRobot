@@ -54,6 +54,7 @@ ${cbreq} =                          Set Variable    ${EMPTY}
 ${cbreq_base_pkt} =                 Set Variable    ${EMPTY}
 ${dbreq} =                          Set Variable    ${EMPTY}   
 ${dbreq_base_pkt} =                 Set Variable    ${EMPTY}
+${pco_mtu}=                         Set Variable    ${EMPTY}
 *** Keywords ***
 Set GTP Socket
     [Arguments]                     ${socket}              
@@ -67,6 +68,12 @@ Validate Response
     [Arguments]                     ${response}
     Should Not Be Equal As Strings  ${response}  None     
     Should Not Be Equal As Strings  ${response}  0.0.0.0  
+
+
+Validate MTU Response
+    [Arguments]                     ${response}
+    Should Be True                  ${response} >= 1400 and ${response} <= 1500  response value is out of range 
+
 Validate Failed Response
     [Arguments]                     ${response}
     Should Not Be Equal As Strings  ${response}  None     
@@ -96,6 +103,11 @@ Set IMS IPAddress and GREID
     ${ims_gre_key}=                 Set Variable    ${finalresult[2]}
     Set Suite Variable              ${ims_ip_address}    
     Set Suite Variable              ${ims_gre_key}
+
+Set MTU
+    [Arguments]                     ${finalresult}
+    ${pco_mtu}=                     Set Variable    ${finalresult[5]}
+    Set Suite Variable              ${pco_mtu}    
 
 Set s6bIPAddress and s6bGREID
     [Arguments]                     ${finalresult}

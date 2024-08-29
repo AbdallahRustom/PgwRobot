@@ -1,7 +1,8 @@
-# ./*.html
-# ./*.xml
-# **/*.html
-# **/*.xml
-# **/**/*.html
-# **/**/*.xml
-# ./src/python/__pycache__
+./*.html
+./*.xml
+**/*.html
+**/*.xml
+**/**/*.html
+**/**/*.xml
+./src/python/__pycache__/
+./CNFS

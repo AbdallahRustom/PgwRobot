@@ -126,14 +126,14 @@ My Eleventh Test
 My Twelfth Test
     [Documentation]                Send Create Session Request with PCO
     [Tags]                         Twelfth
-    ${base_pkt} =                  create_session_request    ${srs_ip}   ${pcoIMSI}     ${mcc}      ${mnc}      ${apn}    ${csrrattype}   ${csrinterfacetype}    ${bearercsrrattype}    ${csrinstance}    ${pcocsrseq}  ${internetepi}     ${internetqci}     ${paadress} 
+    ${base_pkt} =                  create_session_request    ${srs_ip}   ${IMSI}     ${mcc}      ${mnc}      ${apn}    ${csrrattype}   ${csrinterfacetype}    ${bearercsrrattype}    ${csrinstance}    ${pcocsrseq}  ${internetepi}     ${internetqci}     ${paadress} 
     ${pco_base_pkt} =              ie_add_pco    ${base_pkt}
     ${request} =                   send_gtpv2_message        ${socket}   ${pgw_ip}   ${csrport}  ${pco_base_pkt}    
     ${response} =                  get_gtp_response          ${socket}
-    Set IPAddress and GREID        ${response}
-    Log To Console                 ${ip_address} 
-    Validate Response              ${ip_address}
-    Sleep                          5s    
+    Set MTU                        ${response}
+    Log To Console                 ${pco_mtu} 
+    Validate MTU Response          ${pco_mtu} 
+    Sleep                          5s      
 My Thirteenth Test 
     [Documentation]                Closing Clients
     [Tags]                         First    Second    Third     Forth    Fifth    Six    Seven    Eighth    Ninth   Tenth    Eleventh     Twelfth    Thirteenth

@@ -158,6 +158,7 @@ def create_session_request(srcip, IMSI, mcc, mnc, apn, rattype, interfacetype, b
     return base_pkt
 
 def ie_add_pco (base_pkt):
+    
     ie_pco = IE_PCO(
         ietype=78,
         length=32,
@@ -185,8 +186,14 @@ def ie_add_pco (base_pkt):
             PCO_IPv4_Link_MTU_Request(type=0x0010),
         ],
     )
-    pco_base_pkt=base_pkt[GTPV2CreateSessionRequest].IE_list.append(ie_pco)
-    return pco_base_pkt
+
+    if GTPV2CreateSessionRequest in base_pkt :
+        session_request = base_pkt[GTPV2CreateSessionRequest]
+        ie_list = session_request.IE_list   
+        ie_list.append(ie_pco)
+        return base_pkt
+    
+    return None
 
 def modify_bearer_request(gre_key):
     base_pkt = (
@@ -434,9 +441,10 @@ def decode_gtpv2_response(data):
             gre_key=parse_gre_key_from_response(decoded_message)
             pgwu_ipaddress=parse_PGWU_ipv4_address(decoded_message)
             pgwu_gre_key=parse_PGWU_gre_key(decoded_message)
-            return IE_Cause,ipaddress,gre_key,pgwu_ipaddress,pgwu_gre_key
+            mtu_value = parse_mtu(decoded_message)
+            return IE_Cause,ipaddress,gre_key,pgwu_ipaddress,pgwu_gre_key,mtu_value
         else:
-            return IE_Cause,None,None,None,None
+            return IE_Cause,None,None,None,None,None
     
     elif GTPV2ModifyBearerResponse in decoded_message:
         IE_Cause= decoded_message[GTPV2ModifyBearerResponse].IE_list[0].Cause
@@ -479,6 +487,15 @@ def parse_ipv4_address(response):
                 return ipv4_address
     return None
 
+def parse_mtu(response):
+    pco_ie = response[GTPV2CreateSessionResponse].getlayer(IE_PCO).getlayer(PCO_IPv4_Link_MTU_Request)
+    # print("pco Ie\n",pco_ie.PCO_IPv4_Link_MTU_Request)
+    if pco_ie:
+        mtu = pco_ie.MTU_size
+        return mtu
+    return None
+
+
 def parse_gre_key_from_response(response):
     fteid_ie = response[GTPV2CreateSessionResponse].getlayer(IE_FTEID)
     if fteid_ie:
@@ -519,9 +536,14 @@ def get_gtpu_response(s):
         return None
 
 
-# di.establish_diam_tcp_connection()
-# time.sleep(5)
+# # di.establish_diam_tcp_connection()
+# # time.sleep(5)
 # base_packet=create_session_request("127.0.0.2","001021234567895","001","02","internet",6,6,4,2,5667218,5,9,"0.0.0.0")
+# print(base_packet)
+# new_base_packet = ie_add_pco(base_packet)
+# print("****newbase packet \n",new_base_packet)
 # s=init_soc()
 # send_gtpv2_message(s,"127.0.0.4", 2123, base_packet)
+
 # response=get_gtp_response(s)
+# print(response)
