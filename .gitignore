@@ -1,0 +1,7 @@
+# ./*.html
+# ./*.xml
+# **/*.html
+# **/*.xml
+# **/**/*.html
+# **/**/*.xml
+# ./src/python/__pycache__
